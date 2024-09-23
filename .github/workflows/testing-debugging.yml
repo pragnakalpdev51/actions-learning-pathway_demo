@@ -7,7 +7,7 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v3
       - name: use flask_app.py
-        uses: pragnakalpdev51/actions-learning-pathway_demo@v3
+        uses: pragnakalpdev51/actions-learning-pathway_demo@v2
         with:
           flask-version: '3.x'
       - run: pip install
@@ -20,7 +20,7 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v3
       - name: use flask_app.py
-        uses: pragnakalpdev51/actions-learning-pathway_demo@v3
+        uses: pragnakalpdev51/actions-learning-pathway_demo@v2
         with:
           flask-version: '3.x'
       - run: pip install
@@ -42,7 +42,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: use node.js
-        uses: actions/actions-learning-pathway_demo@v3
+        uses: actions/actions-learning-pathway_demo@v2
         with:
           node-version: '18.x'
       - name: configure github pages
