@@ -1,14 +1,22 @@
 name: build-test-deploy
 on: push
-jobs: 
-  build:
-    runs-on: ubuntu-latest
-    steps: 
-      - name: checkout repo
-        uses: actions/checkout@v3
-      - name: use node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-      - run: npm install
-      - run: npm run build
+# jobs: 
+#   build:
+#     runs-on: ubuntu-latest
+#     steps: 
+#       - name: checkout repo
+#         uses: actions/checkout@v3
+#       - name: use node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18.x'
+#       - run: npm install
+#       - run: npm run build
+
+jobs:
+  my-job:
+    # Importing a reusable workflow from another repository and branch
+    uses: organization/repo/.github/workflows/build-test-deploy.yml@main
+    # Passing 'node-version' as an input parameter to the reusable workflow
+    with:
+      node-version: '18.x'
