@@ -1,0 +1,16 @@
+name: build-test-deploy
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: action/checkout@v3
+      - name: use flask_app.py
+        uses: 
+        
+  test:
+
+  
+  deploye:
+    
