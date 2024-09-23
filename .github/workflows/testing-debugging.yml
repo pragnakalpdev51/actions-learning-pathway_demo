@@ -1,63 +1,49 @@
 name: build-test-deploy
 on: push
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      - name: use flask_app.py
+
+      - name: Run Flask App in Docker
         uses: pragnakalpdev51/actions-learning-pathway_demo@main
         with:
           flask-version: '3.x'
-      - run: pip install
-      - run: pip run build
+
+      # Run your Flask app in the background
+      - name: Start Flask server
+        run: |
+          nohup flask run &
+
+      # Install dependencies for testing (e.g., requests, pytest)
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # Test the Flask API
+      - name: Test API
+        run: |
+          python -m pytest tests/
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-      - name: use flask_app.py
-        uses: pragnakalpdev51/actions-learning-pathway_demo@main
-        with:
-          flask-version: '3.x'
-      - run: pip install
-      - run: pip run test
 
-  deploy: 
+      - name: Run tests
+        run: |
+          pip install -r requirements.txt
+          pytest tests/
+
+  deploy:
     needs: test
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: production
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: use node.js
-        uses: actions/actions-learning-pathway_demo@main
-        with:
-          node-version: '18.x'
-      - name: configure github pages
-        uses: pragnakalpdev51/configure-pages@v3
-        with:
-          static_site_generator: next 
-          
-      - run: npm install
-      - run: npm run build 
-      - name: upload artifacts
-        uses: pragnakalpdev51/upload-pages-artifact@v1
-        with: 
-          path: "./out"
-  
-      - name: deploy
-        id: deployment
-        uses: actions/deploy-pages@v1
+
   
