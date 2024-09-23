@@ -9,9 +9,6 @@ jobs:
       - run: echo "$(cat hello-world_.txt)"
       
       - name: Adding markdown
-        run: echo '### Hello world! 🚀' >> $GITHUB_STEP_SUMMARY
-          
-    s
-  
+        run: echo '### Hello world! 🚀' >> $GITHUB_STEP_SUMMARY  
 
 
