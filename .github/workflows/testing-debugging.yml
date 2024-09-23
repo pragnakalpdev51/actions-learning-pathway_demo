@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
-        uses: action/checkout@v3
+        uses: actions/checkout@v3
       - name: use flask_app.py
         uses: actions/actions-learning-pathway_demo@v3
         with:
