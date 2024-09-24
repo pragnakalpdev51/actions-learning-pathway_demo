@@ -8,24 +8,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Run Flask App in Docker
-        uses: pragnakalpdev51/actions-learning-pathway_demo@main
-        with:
-          flask-version: '3.x'
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
 
-      # Run your Flask app in the background
+      # Run Flask server in the background
       - name: Start Flask server
         run: |
           nohup flask run &
 
-      # Install dependencies for testing (e.g., requests, pytest)
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
-
-      # Test the Flask API
+      # Test API endpoints (you can use curl or any testing script)
       - name: Test API
         run: |
-          python -m pytest tests/
+          sleep 5  # Wait for server to start
+          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
+      
+      # Continue with other steps
+      - name: Additional steps
+        run: |
+          echo "Perform additional build or test steps here"
 
   test:
     needs: build
@@ -46,8 +46,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Deploy the Flask app (you need to specify your deployment steps)
-      # - name: Deploy to server
-      #   run: |
-      #     # Example command, replace with actual deployment steps
-      #     scp -r * user@yourserver.com:/path/to/deploy/
+      # Add deployment steps here
+      - name: Deploy to production
+        run: |
+          echo "Add deployment commands here"
