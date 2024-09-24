@@ -22,7 +22,7 @@ jobs:
 
       - name: Test Flask API
         run: |
-          response=$(curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"key": "value"}' -H 'Content-Type: application/json')
+          response=$(curl -X POST http://127.0.0.1:5000/ -d '{"key": "value"}' -H 'Content-Type: application/json')
           echo "Response: $response"
 
       - name: Clean up
