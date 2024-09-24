@@ -1,9 +1,43 @@
+# name: Build and Run Docker Image
+
+# on:
+#   push:
+#     branches:
+#       - main  # Change this to your main branch if different
+
+# jobs:
+#   build-and-run:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Build Docker image
+#         run: docker build -t flask_app_image .
+
+#       - name: Run Docker container
+#         run: |
+#           docker run -d -p 5000:5000 --name flask_app_container flask_app_image
+#           sleep 10  # Increase sleep duration if needed
+
+#       - name: Check Docker logs
+#         run: docker logs flask_app_container
+
+#       - name: Test Flask API
+#         run: |
+#           response=$(curl -X POST http://localhost:5000/ -d '{"key": "value"}' -H 'Content-Type: application/json')
+#           echo "Response: $response"
+
+#       - name: Clean up
+#         run: |
+#           docker stop flask_app_container
+#           docker rm flask_app_container        
 name: Build and Run Docker Image
 
 on:
   push:
     branches:
-      - main  # Change this to your main branch if different
+      - main  # Change to your main branch if different
 
 jobs:
   build-and-run:
@@ -18,14 +52,14 @@ jobs:
       - name: Run Docker container
         run: |
           docker run -d -p 5000:5000 --name flask_app_container flask_app_image
-          sleep 10  # Increase sleep duration if needed
+          sleep 10  # Wait for the app to start
 
       - name: Check Docker logs
         run: docker logs flask_app_container
 
       - name: Test Flask API
         run: |
-          response=$(curl -X POST http://localhost:5000/ -d '{"key": "value"}' -H 'Content-Type: application/json')
+          response=$(curl -X POST http://localhost:5000/your-endpoint -d '{"key": "value"}' -H 'Content-Type: application/json')
           echo "Response: $response"
 
       - name: Clean up
