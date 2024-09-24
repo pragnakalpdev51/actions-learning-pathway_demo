@@ -46,4 +46,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-  
+      # Deploy the Flask app (you need to specify your deployment steps)
+      # - name: Deploy to server
+      #   run: |
+      #     # Example command, replace with actual deployment steps
+      #     scp -r * user@yourserver.com:/path/to/deploy/
