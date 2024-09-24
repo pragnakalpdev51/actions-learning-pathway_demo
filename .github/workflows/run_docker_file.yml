@@ -18,11 +18,14 @@ jobs:
       - name: Run Docker container
         run: |
           docker run -d -p 5000:5000 --name flask_app_container flask_app_image
-          sleep 5  # Wait for the Flask app to start
+          sleep 10  # Increase sleep duration if needed
+
+      - name: Check Docker logs
+        run: docker logs flask_app_container
 
       - name: Test Flask API
         run: |
-          response=$(curl -X POST http://127.0.0.1:5000/ -d '{"key": "value"}' -H 'Content-Type: application/json')
+          response=$(curl -X POST http://localhost:5000/ -d '{"key": "value"}' -H 'Content-Type: application/json')
           echo "Response: $response"
 
       - name: Clean up
