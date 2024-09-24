@@ -1,9 +1,45 @@
-name: Run Hello Script and Test
+# name: Run Hello Script and Test
+
+# on:
+#   push:
+#     branches:
+#       - main  
+
+# jobs:
+#   run:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: '3.8'  
+
+#       - name: Install dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install flask  # Install Flask if you need it for your app
+
+#       - name: Run hello.py
+#         run: |
+#           nohup python new.py &  # Run the Flask app in the background
+#           sleep 10  # Wait for the server to start
+
+#       # - name: Send POST request
+#       #   run: |
+#       #     payload='{"data":"Hello"}'  # Replace this with your dynamic data
+#       #     echo "Sending payload: $payload"  # Print the payload
+#       #     curl -X POST https://28d1-2401-4900-8899-e44d-d205-1008-1294-cfaf.ngrok-free.app/ \
+#       #     -d "$payload" -H 'Content-Type: application/json'
+name: Run Hello Script
 
 on:
   push:
     branches:
-      - main  
+      - main  # Change to your default branch if it's not main
 
 jobs:
   run:
@@ -16,21 +52,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'  
+          python-version: '3.8'  # Specify the Python version you want to use
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flask  # Install Flask if you need it for your app
+          # If you have dependencies, install them here, e.g.:
+          # pip install -r requirements.txt
 
       - name: Run hello.py
-        run: |
-          nohup python new.py &  # Run the Flask app in the background
-          sleep 10  # Wait for the server to start
-
-      # - name: Send POST request
-      #   run: |
-      #     payload='{"data":"Hello"}'  # Replace this with your dynamic data
-      #     echo "Sending payload: $payload"  # Print the payload
-      #     curl -X POST https://28d1-2401-4900-8899-e44d-d205-1008-1294-cfaf.ngrok-free.app/ \
-      #     -d "$payload" -H 'Content-Type: application/json'
+        run: python hello.py
