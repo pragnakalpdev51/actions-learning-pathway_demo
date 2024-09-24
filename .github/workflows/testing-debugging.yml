@@ -4,28 +4,26 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      flask:
+        image: pragnakalpdev51/actions-learning-pathway_demo:latest
+        options: >-
+          --entrypoint "flask run --host=0.0.0.0"
+        ports:
+          - 5000:5000
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
+      # Wait for Flask service to start
+      - name: Wait for Flask to be ready
+        run: |
+          sleep 10  # Adjust this based on how long your Flask app takes to start
 
-      # Run Flask server in the background
-      - name: Start Flask server
+      # Test the Flask API
+      - name: Test API endpoints
         run: |
-          nohup flask run &
-
-      # Test API endpoints (you can use curl or any testing script)
-      - name: Test API
-        run: |
-          sleep 5  # Wait for server to start
-          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
-      
-      # Continue with other steps
-      - name: Additional steps
-        run: |
-          echo "Perform additional build or test steps here"
+          curl http://localhost:5000/your-endpoint
 
   test:
     needs: build
@@ -46,7 +44,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Add deployment steps here
+      # Deployment steps here
       - name: Deploy to production
         run: |
           echo "Add deployment commands here"
