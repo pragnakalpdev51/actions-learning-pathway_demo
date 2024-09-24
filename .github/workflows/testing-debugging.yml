@@ -46,7 +46,7 @@ jobs:
       # Test the Flask API
       - name: Test Flask API
         run: |
-          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
+          curl -X POST http://127.0.0.1:5000/ -d '{"data":"value"}' -H 'Content-Type: application/json'
 
       # Stop and remove the Docker container
       - name: Clean up
