@@ -10,16 +10,19 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -t flask_app_image .
+        uses: pragnakalpdev51/actions-learning-pathway_demo@main
+      - run: docker build -t flask_app_image .
 
       # Save Docker image as an artifact to use in the test job
       - name: Save Docker image as artifact
-        run: |
-          docker save flask_app_image | gzip > flask_app_image.tar.gz
         uses: actions/upload-artifact@v3
         with:
           name: flask_app_image
           path: flask_app_image.tar.gz
+      - run: |
+          docker save flask_app_image | gzip > flask_app_image.tar.gz
+        
+        
 
   test:
     needs: build  # This ensures the test job runs after the build job completes
