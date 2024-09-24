@@ -8,48 +8,35 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Build Docker image
+      # Build Docker image without pushing to a registry
       - name: Build Docker image
         run: docker build -t flask_app_image .
 
-      # Optional: Push the Docker image to a registry
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+      # Run the container to check if it builds and runs correctly
+      - name: Run Docker container for testing
+        run: |
+          docker run -d -p 5000:5000 --name flask_app_container flask_app_image
+          sleep 5  # Wait for the Flask app to start
 
-      - name: Push Docker image
-        run: docker tag flask_app_image:latest your_dockerhub_username/flask_app_image:latest && docker push your_dockerhub_username/flask_app_image:latest
+      # Test the Flask app running inside the container
+      - name: Test Flask API
+        run: |
+          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
 
-  test:
+      # Stop and remove the Docker container
+      - name: Clean up
+        run: |
+          docker stop flask_app_container
+          docker rm flask_app_container
+
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Pull and run the Docker container for testing
-      - name: Pull Docker image
-        run: docker pull your_dockerhub_username/flask_app_image:latest
-
-      - name: Run Docker container
+      # Run the Docker container in the production environment
+      - name: Run Docker container in production
         run: |
-          docker run -d -p 5000:5000 --name flask_app_container your_dockerhub_username/flask_app_image:latest
-          sleep 5  # Wait for the Flask app to start
-
-      - name: Test Flask API
-        run: |
-          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Pull and run the Docker container in the production environment
-      - name: Pull Docker image
-        run: docker pull your_dockerhub_username/flask_app_image:latest
-
-      - name: Run Docker container
-        run: |
-          docker run -d -p 5000:5000 --name flask_app_container your_dockerhub_username/flask_app_image:latest
+          docker run -d -p 5000:5000 --name flask_app_container flask_app_image
