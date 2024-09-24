@@ -6,4 +6,4 @@ data = {"data": "value"}
 response = requests.post(url, json=data)
 
 print(response.status_code)
-print(response.json())  # or response.text if the response is not JSON
+print(response.json()) 
