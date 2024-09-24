@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/checkout@v3
         with:
           name: flask_app_image
 
@@ -34,7 +34,7 @@ jobs:
       # Test the Flask API
       - name: Test Flask API
         run: |
-          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
+          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data": "value"}' -H 'Content-Type: application/json'
 
       # Stop and remove the Docker container
       - name: Clean up
@@ -51,7 +51,7 @@ jobs:
 
       # Load the Docker image from the previous job
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/checkout@v3
         with:
           name: flask_app_image
 
