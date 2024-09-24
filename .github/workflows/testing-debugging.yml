@@ -1,50 +1,63 @@
 name: build-test-deploy
 on: push
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    services:
-      flask:
-        image: pragnakalpdev51/actions-learning-pathway_demo:latest
-        options: >-
-          --entrypoint "flask run --host=0.0.0.0"
-        ports:
-          - 5000:5000
     steps:
-      - name: Checkout repo
+      - name: checkout repo
         uses: actions/checkout@v3
-
-      # Wait for Flask service to start
-      - name: Wait for Flask to be ready
-        run: |
-          sleep 10  # Adjust this based on how long your Flask app takes to start
-
-      # Test the Flask API
-      - name: Test API endpoints
-        run: |
-          curl http://localhost:5000/your-endpoint
+      - name: use Dockerfile
+        uses: pragnakalpdev51/actions-learning-pathway_demo@main
+        with:
+          flask-version: '3.x'
+      - run: pip install
+      - run: pip run build
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: checkout repo
         uses: actions/checkout@v3
+      - name: use Dockerfile
+        uses: pragnakalpdev51/actions-learning-pathway_demo@main
+        with:
+          flask-version: '3.x'
+      - run: pip install
+      - run: pip run test
 
-      - name: Run tests
-        run: |
-          pip install -r requirements.txt
-          pytest tests/
-
-  deploy:
+  deploy: 
     needs: test
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: checkout repo
         uses: actions/checkout@v3
-
-      # Deployment steps here
-      - name: Deploy to production
-        run: |
-          echo "Add deployment commands here"
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: use Dockerfile
+        uses: actions/actions-learning-pathway_demo@main
+        with:
+          node-version: '18.x'
+      - name: configure github pages
+        uses: pragnakalpdev51/configure-pages@v3
+        with:
+          static_site_generator: next 
+          
+      - run: npm install
+      - run: npm run build 
+      - name: upload artifacts
+        uses: pragnakalpdev51/upload-pages-artifact@v1
+        with: 
+          path: "./out"
+  
+      - name: deploy
+        id: deployment
+        uses: actions/deploy-pages@v1
+  
