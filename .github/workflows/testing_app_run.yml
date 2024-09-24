@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install flask  # Install Flask if you need it for your app
 
-      - name: Run new.py
+      - name: Run hello.py
         run: |
           nohup python new.py &  # Run the Flask app in the background
           sleep 10  # Wait for the server to start
