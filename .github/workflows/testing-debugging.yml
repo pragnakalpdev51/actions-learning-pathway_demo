@@ -18,6 +18,7 @@ jobs:
       - name: Save Docker image as artifact
         run: |
           docker save flask_app_image | gzip > flask_app_image.tar.gz
+      - name: upload docker
         uses: actions/upload-artifact@v3
         with:
           name: flask_app_image
