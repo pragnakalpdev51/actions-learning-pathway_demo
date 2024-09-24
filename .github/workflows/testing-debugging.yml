@@ -1,30 +1,30 @@
-name: Build, Test, and Deploy Flask App
-on: push
+name: CI/CD for Flask App
+
+on:
+  push:
+    branches:
+      - main  # Change this to your main branch if different
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Build Docker image
       - name: Build Docker image
         run: docker build -t flask_app_image .
 
-      # Save Docker image as artifact
       - name: Save Docker image as artifact
         run: |
           docker save flask_app_image | gzip > flask_app_image.tar.gz
-        # Upload the artifact
-      - name: Upload Docker image artifact
         uses: actions/upload-artifact@v3
         with:
           name: flask_app_image
           path: flask_app_image.tar.gz
 
   test:
-    needs: build  # This ensures the test job runs after the build job completes
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download Docker image artifact
@@ -32,46 +32,39 @@ jobs:
         with:
           name: flask_app_image
 
-      # Load the Docker image
       - name: Load Docker image
-        run: |
-          gunzip -c flask_app_image.tar.gz | docker load
+        run: gunzip -c flask_app_image.tar.gz | docker load
 
-      # Run Docker container for testing
       - name: Run Docker container for testing
         run: |
           docker run -d -p 5000:5000 --name flask_app_container flask_app_image
           sleep 5  # Wait for the Flask app to start
 
-      # Test the Flask API
       - name: Test Flask API
         run: |
           curl -X POST http://127.0.0.1:5000/ -d '{"data":"value"}' -H 'Content-Type: application/json'
 
-      # Stop and remove the Docker container
       - name: Clean up
         run: |
           docker stop flask_app_container
           docker rm flask_app_container
 
   deploy:
-    needs: test  # This ensures the deploy job runs after the test job completes
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Load the Docker image from the previous job
       - name: Download Docker image artifact
-        uses: actions/checkout@v3
+        uses: actions/download-artifact@v3
         with:
           name: flask_app_image
 
       - name: Load Docker image
-        run: |
-          gunzip -c flask_app_image.tar.gz | docker load
+        run: gunzip -c flask_app_image.tar.gz | docker load
 
-      # Run the Docker container in the production environment
       - name: Run Docker container in production
         run: |
           docker run -d -p 5000:5000 --name flask_app_container flask_app_image
+          sleep 5  # Wait for the Flask app to start
