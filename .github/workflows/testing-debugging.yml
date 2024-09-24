@@ -1,63 +1,55 @@
 name: build-test-deploy
 on: push
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: use Dockerfile
-        uses: pragnakalpdev51/actions-learning-pathway_demo@main
-        with:
-          flask-version: '3.x'
-      - run: pip install
-      - run: pip run build
+
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t flask_app_image .
+
+      # Optional: Push the Docker image to a registry
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker tag flask_app_image:latest your_dockerhub_username/flask_app_image:latest && docker push your_dockerhub_username/flask_app_image:latest
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: use Dockerfile
-        uses: pragnakalpdev51/actions-learning-pathway_demo@main
-        with:
-          flask-version: '3.x'
-      - run: pip install
-      - run: pip run test
 
-  deploy: 
+      # Pull and run the Docker container for testing
+      - name: Pull Docker image
+        run: docker pull your_dockerhub_username/flask_app_image:latest
+
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5000:5000 --name flask_app_container your_dockerhub_username/flask_app_image:latest
+          sleep 5  # Wait for the Flask app to start
+
+      - name: Test Flask API
+        run: |
+          curl -X POST http://127.0.0.1:5000/your-endpoint -d '{"data":"value"}' -H 'Content-Type: application/json'
+
+  deploy:
     needs: test
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
-    environment:
-      name: production
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: use Dockerfile
-        uses: actions/actions-learning-pathway_demo@main
-        with:
-          node-version: '18.x'
-      - name: configure github pages
-        uses: pragnakalpdev51/configure-pages@v3
-        with:
-          static_site_generator: next 
-          
-      - run: npm install
-      - run: npm run build 
-      - name: upload artifacts
-        uses: pragnakalpdev51/upload-pages-artifact@v1
-        with: 
-          path: "./out"
-  
-      - name: deploy
-        id: deployment
-        uses: actions/deploy-pages@v1
-  
+
+      # Pull and run the Docker container in the production environment
+      - name: Pull Docker image
+        run: docker pull your_dockerhub_username/flask_app_image:latest
+
+      - name: Run Docker container
+        run: |
+          docker run -d -p 5000:5000 --name flask_app_container your_dockerhub_username/flask_app_image:latest
