@@ -23,14 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install flask  # Install Flask if you need it for your app
 
-      - name: Run hello.py
+      - name: Run new.py
         run: |
           nohup python new.py &  # Run the Flask app in the background
-          sleep 5  # Wait for the server to start
+          sleep 10  # Wait for the server to start
 
       - name: Send POST request
         run: |
-          payload='{"data":"Hello"}'  # Replace this with your dynamic data
+          # payload='{"data":"Hello"}'  # Replace this with your dynamic data
           echo "Sending payload: $payload"  # Print the payload
           curl -X POST https://28d1-2401-4900-8899-e44d-d205-1008-1294-cfaf.ngrok-free.app/ \
           -d "$payload" -H 'Content-Type: application/json'
